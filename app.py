@@ -186,6 +186,7 @@ if uploaded_file is not None:
       result_boxes.append(result[0].boxes.xyxy.cpu().numpy())
       result_scores.append(result[0].boxes.conf.cpu().numpy())
       result_classes.append(result[0].boxes.cls.cpu().numpy())
+	    
     all_boxes = []
     for index,i in enumerate(result_boxes):
       if index%4==0:
