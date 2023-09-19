@@ -199,6 +199,7 @@ if uploaded_file is not None:
         shpe = [int(x1+a),int(y1+b),int(x2+a),int(y2+b)]
         all_boxes.append(shpe)
     NMS_boxes = non_max_suppression_fast(np.array(all_boxes),0.1)
+	st.write(NMS_boxes[0])
     for img in NMS_boxes:
       xmin,ymin,xmax,ymax = tuple(img)
       if abs(x1-x2)*abs(y1-y2) >600:
