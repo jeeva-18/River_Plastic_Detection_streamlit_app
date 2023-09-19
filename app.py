@@ -1,110 +1,96 @@
-# Python In-built packages
-from pathlib import Path
-import PIL
+# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-# External packages
 import streamlit as st
+import matplotlib.image as mpimg
+import numpy as np
+import pandas as pd
+from PIL import Image  
+import piexif
+import ultralytics
 
-# Local Modules
-import settings
-import helper
 
-# Setting page layout
-st.set_page_config(
-    page_title="Object Detection using YOLOv8",
-    page_icon="🤖",
-    layout="wide",
-    initial_sidebar_state="expanded"
+def split_images(img,W_SIZE,H_SIZE):
+  img2 = img
+  images = []
+  height, width, channels = img.shape
+
+  for ih in range(H_SIZE ):
+    for iw in range(W_SIZE ):
+
+        x = width/W_SIZE * iw
+        y = height/H_SIZE * ih
+        h = (height / H_SIZE)
+        w = (width / W_SIZE )
+        # plt.subplot(4,4,ih+iw+1)
+        img = img[int(y):int(y+h), int(x):int(x+w)]
+        images.append(img)
+        img = img2
+  return images
+
+def decimal_coords(coords, ref):
+ decimal_degrees = coords[0] + coords[1] / 60 + coords[2] / 3600
+ if ref == 'S' or ref == 'W':
+     decimal_degrees = -decimal_degrees
+ return decimal_degrees
+
+  
+    st.set_page_config(
+        page_title="River Plastic Detection",
+        page_icon="💦",
+    )
+
+    st.write("# River Plastic Detection")
+
+    uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
+
+
+if uploaded_file is not None:
+  image = mpimg.imread(uploaded_file)
+  st.write("Original Image: ")
+  st.image(image)
+  image = Image.open(uploaded_file)
+  exif_dict = None
+  if "exif" in image.info:
+      exif_dict = piexif.load(image.info["exif"])
+      new = dict(exif_dict['GPS'])
+      val = list(new.values())
+  else:
+     st.write("doesn't have exif data")
+lat_ref = str(val[1])
+lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
+lon_ref = str(val[3])
+lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
+coords = (decimal_coords(lat,
+                  lat_ref),decimal_coords(lon,lon_ref))
+st.write(coords)
+df = pd.DataFrame(
+    {"lat":coords[0],
+    'lon':coords[1]},
+    index=[0,1]
 )
+color = np.random.rand(1, 4).tolist()[0]
+st.sidebar.write("## Geolocation:")
+st.sidebar.map(df,color=color)
 
-# Main page heading
-st.title("Object Detection using YOLOv8")
+images = split_images(np.array(image),4,4)
 
-# Sidebar
-st.sidebar.header("ML Model Config")
+    # st.write(np.array(images).shape)
+    
 
-# Model Options
-model_type = st.sidebar.radio(
-    "Select Task", ['Detection', 'Segmentation'])
 
-confidence = float(st.sidebar.slider(
-    "Select Model Confidence", 25, 100, 40)) / 100
 
-# Selecting Detection Or Segmentation
-if model_type == 'Detection':
-    model_path = Path(settings.DETECTION_MODEL)
-elif model_type == 'Segmentation':
-    model_path = Path(settings.SEGMENTATION_MODEL)
 
-# Load Pre-trained ML Model
-try:
-    model = helper.load_model(model_path)
-except Exception as ex:
-    st.error(f"Unable to load model. Check the specified path: {model_path}")
-    st.error(ex)
 
-st.sidebar.header("Image/Video Config")
-source_radio = st.sidebar.radio(
-    "Select Source", settings.SOURCES_LIST)
 
-source_img = None
-# If image is selected
-if source_radio == settings.IMAGE:
-    source_img = st.sidebar.file_uploader(
-        "Choose an image...", type=("jpg", "jpeg", "png", 'bmp', 'webp'))
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        try:
-            if source_img is None:
-                default_image_path = str(settings.DEFAULT_IMAGE)
-                default_image = PIL.Image.open(default_image_path)
-                st.image(default_image_path, caption="Default Image",
-                         use_column_width=True)
-            else:
-                uploaded_image = PIL.Image.open(source_img)
-                st.image(source_img, caption="Uploaded Image",
-                         use_column_width=True)
-        except Exception as ex:
-            st.error("Error occurred while opening the image.")
-            st.error(ex)
-
-    with col2:
-        if source_img is None:
-            default_detected_image_path = str(settings.DEFAULT_DETECT_IMAGE)
-            default_detected_image = PIL.Image.open(
-                default_detected_image_path)
-            st.image(default_detected_image_path, caption='Detected Image',
-                     use_column_width=True)
-        else:
-            if st.sidebar.button('Detect Objects'):
-                res = model.predict(uploaded_image,
-                                    conf=confidence
-                                    )
-                boxes = res[0].boxes
-                res_plotted = res[0].plot()[:, :, ::-1]
-                st.image(res_plotted, caption='Detected Image',
-                         use_column_width=True)
-                try:
-                    with st.expander("Detection Results"):
-                        for box in boxes:
-                            st.write(box.data)
-                except Exception as ex:
-                    # st.write(ex)
-                    st.write("No image is uploaded yet!")
-
-elif source_radio == settings.VIDEO:
-    helper.play_stored_video(confidence, model)
-
-elif source_radio == settings.WEBCAM:
-    helper.play_webcam(confidence, model)
-
-elif source_radio == settings.RTSP:
-    helper.play_rtsp_stream(confidence, model)
-
-elif source_radio == settings.YOUTUBE:
-    helper.play_youtube_video(confidence, model)
-
-else:
-    st.error("Please select a valid source type!")
