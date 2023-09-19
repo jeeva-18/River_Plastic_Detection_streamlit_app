@@ -1,5 +1,6 @@
 altair==5.1.1
 attrs==23.1.0
+piexif
 backports.zoneinfo==0.2.1
 blinker==1.6.2
 cachetools==5.3.1
