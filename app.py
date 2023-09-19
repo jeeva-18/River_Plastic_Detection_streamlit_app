@@ -153,6 +153,8 @@ st.write("# River Plastic Detection")
 
 uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
 
+font = ImageFont.truetype("Gidole-Regular.ttf",size=50)
+
 
 if uploaded_file is not None:
   image = mpimg.imread(uploaded_file)
