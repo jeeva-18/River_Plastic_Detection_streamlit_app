@@ -169,7 +169,7 @@ if uploaded_file is not None:
     lon_ref = str(val[3])
     lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
     coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
-    st.write(coords)
+    # st.write(coords)
     df = pd.DataFrame(
         {"lat":coords[0],
         'lon':coords[1]},
@@ -202,7 +202,7 @@ if uploaded_file is not None:
     st.write(NMS_boxes[0])
     for img in NMS_boxes:
       xmin,ymin,xmax,ymax = tuple(img)
-      if abs(x1-x2)*abs(y1-y2) >600:
+      if abs(xmin-xmax)*abs(ymin-ymax) > 600:
         draw_bounding_box_on_image(image,
                                     ymin,
                                     xmin,
