@@ -46,14 +46,14 @@ def decimal_coords(coords, ref):
  return decimal_degrees
 
   
-    st.set_page_config(
+st.set_page_config(
         page_title="River Plastic Detection",
         page_icon="💦",
     )
 
-    st.write("# River Plastic Detection")
+st.write("# River Plastic Detection")
 
-    uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
+uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
 
 
 if uploaded_file is not None:
@@ -66,23 +66,22 @@ if uploaded_file is not None:
       exif_dict = piexif.load(image.info["exif"])
       new = dict(exif_dict['GPS'])
       val = list(new.values())
+      lat_ref = str(val[1])
+      lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
+      lon_ref = str(val[3])
+      lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
+      coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
+      st.write(coords)
+      df = pd.DataFrame(
+          {"lat":coords[0],
+          'lon':coords[1]},
+          index=[0,1])
+      color = np.random.rand(1, 4).tolist()[0]
+      st.sidebar.write("## Geolocation:")
+      st.sidebar.map(df,color=color)
   else:
      st.write("doesn't have exif data")
-lat_ref = str(val[1])
-lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
-lon_ref = str(val[3])
-lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
-coords = (decimal_coords(lat,
-                  lat_ref),decimal_coords(lon,lon_ref))
-st.write(coords)
-df = pd.DataFrame(
-    {"lat":coords[0],
-    'lon':coords[1]},
-    index=[0,1]
-)
-color = np.random.rand(1, 4).tolist()[0]
-st.sidebar.write("## Geolocation:")
-st.sidebar.map(df,color=color)
+
 
 images = split_images(np.array(image),4,4)
 
