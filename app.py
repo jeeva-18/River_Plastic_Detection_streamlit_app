@@ -17,6 +17,7 @@ import matplotlib.image as mpimg
 import numpy as np
 import pandas as pd
 from PIL import Image  
+from PIL import ImageFont
 import piexif
 from ultralytics import YOLO
 
