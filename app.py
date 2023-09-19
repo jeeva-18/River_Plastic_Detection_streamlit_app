@@ -20,6 +20,11 @@ from PIL import Image
 import piexif
 from ultralytics import YOLO
 
+st.set_page_config(
+        page_title="River Plastic Detection",
+        page_icon="💦",
+    )
+
 def draw_bounding_box_on_image(image,
                                ymin,
                                xmin,
@@ -141,10 +146,7 @@ def decimal_coords(coords, ref):
  return decimal_degrees
 
   
-st.set_page_config(
-        page_title="River Plastic Detection",
-        page_icon="💦",
-    )
+
 
 st.write("# River Plastic Detection")
 
