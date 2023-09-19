@@ -20,6 +20,8 @@ from PIL import Image
 import piexif
 from ultralytics import YOLO
 
+count=0
+
 st.set_page_config(
         page_title="River Plastic Detection",
         page_icon="💦",
@@ -92,7 +94,6 @@ def split_images(img,W_SIZE,H_SIZE):
         images.append(img)
         img = img2
   return images
-23
 def non_max_suppression_fast(boxes, overlapThresh):
 	# if there are no boxes, return an empty list
 	if len(boxes) == 0:
