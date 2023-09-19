@@ -18,7 +18,7 @@ import numpy as np
 import pandas as pd
 from PIL import Image  
 import piexif
-import ultralytics
+from ultralytics import YOLO
 
 
 def split_images(img,W_SIZE,H_SIZE):
@@ -63,27 +63,28 @@ if uploaded_file is not None:
   image = Image.open(uploaded_file)
   exif_dict = None
   if "exif" in image.info:
-      exif_dict = piexif.load(image.info["exif"])
-      new = dict(exif_dict['GPS'])
-      val = list(new.values())
-      lat_ref = str(val[1])
-      lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
-      lon_ref = str(val[3])
-      lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
-      coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
-      st.write(coords)
-      df = pd.DataFrame(
-          {"lat":coords[0],
-          'lon':coords[1]},
-          index=[0,1])
-      color = np.random.rand(1, 4).tolist()[0]
-      st.sidebar.write("## Geolocation:")
-      st.sidebar.map(df,color=color)
+    exif_dict = piexif.load(image.info["exif"])
+    new = dict(exif_dict['GPS'])
+    val = list(new.values())
+    lat_ref = str(val[1])
+    lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
+    lon_ref = str(val[3])
+    lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
+    coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
+    st.write(coords)
+    df = pd.DataFrame(
+        {"lat":coords[0],
+        'lon':coords[1]},
+        index=[0,1])
+    color = np.random.rand(1, 4).tolist()[0]
+    st.sidebar.write("## Geolocation:")
+    st.sidebar.map(df,color=color)
+    images = split_images(np.array(image),4,4)
   else:
      st.write("doesn't have exif data")
 
 
-images = split_images(np.array(image),4,4)
+
 
     # st.write(np.array(images).shape)
     
