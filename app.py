@@ -196,7 +196,7 @@ if uploaded_file is not None:
 				    layers=[
 				        pdk.Layer(
 				           'HexagonLayer',
-				           data=chart_data,
+				           data=df,
 				           get_position='[lon, lat]',
 				           radius=200,
 				           elevation_scale=4,
@@ -206,7 +206,7 @@ if uploaded_file is not None:
 				        ),
 				        pdk.Layer(
 				            'ScatterplotLayer',
-				            data=chart_data,
+				            data=df,
 				            get_position='[lon, lat]',
 				            get_color='[200, 30, 0, 160]',
 				            get_radius=200,
