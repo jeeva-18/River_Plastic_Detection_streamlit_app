@@ -210,16 +210,16 @@ if uploaded_file is not None:
 	NMS_boxes = non_max_suppression_fast(np.array(all_boxes),0.1)
 	for img in NMS_boxes:
 		xmin,ymin,xmax,ymax = tuple(img)
-		# if abs(xmin-xmax)*abs(ymin-ymax) > 200:
-		draw_bounding_box_on_image(image,
-					    ymin,
-					    xmin,
-					    ymax,
-					    xmax,
-					    color='blue',
-					    font=font,
-					    thickness=4,
-					    display_str_list=('PLASTIC',"",""))
+		if abs(xmin-xmax)*abs(ymin-ymax) > 500:
+			draw_bounding_box_on_image(image,
+						    ymin,
+						    xmin,
+						    ymax,
+						    xmax,
+						    color='blue',
+						    font=font,
+						    thickness=4,
+						    display_str_list=('PLASTIC',"",""))
 	
 	st.subheader(f"Plastic Count \: :red[{NMS_boxes.shape[0]}]")
 	st.write("## Detections: ")  
