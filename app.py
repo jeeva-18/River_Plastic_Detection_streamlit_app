@@ -182,7 +182,7 @@ if uploaded_file is not None:
 	        {"lat":coords[0],
 	        'lon':coords[1]},
 	        index=[0,1])
-	    color = "red"
+	    color = np.random.randn(1,4).tolist()
 	    st.sidebar.header("Geolocation:",divider='rainbow')
 	    st.sidebar.map(df,color=color)
   else:
