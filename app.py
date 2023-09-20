@@ -194,34 +194,34 @@ if upload_file is not None:
 	result_scores = []
 	result_classes = []
 	for i in images:
-	result  = model.predict(i)
-	result_boxes.append(result[0].boxes.xyxy.cpu().numpy())
-	result_scores.append(result[0].boxes.conf.cpu().numpy())
-	result_classes.append(result[0].boxes.cls.cpu().numpy())
+		result  = model.predict(i)
+		result_boxes.append(result[0].boxes.xyxy.cpu().numpy())
+		result_scores.append(result[0].boxes.conf.cpu().numpy())
+		result_classes.append(result[0].boxes.cls.cpu().numpy())
 	    
 	all_boxes = []
 	for index,i in enumerate(result_boxes):
-	if index%4==0:
-	b = 2992-(748*(4-count%4))
-	count+=1
-	for j in i:
-	x1,y1,x2,y2 = tuple(j)
-	a = 3992-(998*(4-index%4))
-	shpe = [int(x1+a),int(y1+b),int(x2+a),int(y2+b)]
-	all_boxes.append(shpe)
+		if index%4==0:
+			b = 2992-(748*(4-count%4))
+			count+=1
+		for j in i:
+			x1,y1,x2,y2 = tuple(j)
+			a = 3992-(998*(4-index%4))
+			shpe = [int(x1+a),int(y1+b),int(x2+a),int(y2+b)]
+			all_boxes.append(shpe)
 	NMS_boxes = non_max_suppression_fast(np.array(all_boxes),nms_threshold)
 	for img in NMS_boxes:
-	xmin,ymin,xmax,ymax = tuple(img)
-	if abs(xmin-xmax)*abs(ymin-ymax) > 600:
-	draw_bounding_box_on_image(image,
-				    ymin,
-				    xmin,
-				    ymax,
-				    xmax,
-				    color='blue',
-				    font=font,
-				    thickness=4,
-				    display_str_list=('PLASTIC',"",""))
+		xmin,ymin,xmax,ymax = tuple(img)
+		if abs(xmin-xmax)*abs(ymin-ymax) > 600:
+			draw_bounding_box_on_image(image,
+						    ymin,
+						    xmin,
+						    ymax,
+						    xmax,
+						    color='blue',
+						    font=font,
+						    thickness=4,
+						    display_str_list=('PLASTIC',"",""))
 	
 	st.subheader(f"Plastic Count \: :red[{len(NMS_boxes)}]")
 	st.write("## Detections: ")  
