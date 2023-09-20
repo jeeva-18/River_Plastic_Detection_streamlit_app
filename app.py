@@ -223,7 +223,7 @@ if uploaded_file is not None:
 					    thickness=4,
 					    display_str_list=('PLASTIC',"",""))
 	
-	st.subheader(f"Plastic Count \: :red[{len(NMS_boxes)}]")
+	st.subheader(f"Plastic Count \: :red[{NMS_boxes.shape[0]}]")
 	st.write("## Detections: ")  
 	st.image(np.array(image))
 
