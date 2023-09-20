@@ -187,7 +187,7 @@ if uploaded_file is not None:
 	    st.sidebar.map(df,color=color)
   else:
      st.write("doesn't have exif data")
-if upload_file is not None:
+if uploaded_file is not None:
 	images = split_images(np.array(image),4,4)
 	model = YOLO("./weights/best.pt")
 	result_boxes = []
