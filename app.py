@@ -151,7 +151,8 @@ def decimal_coords(coords, ref):
   
 
 
-st.header(' # River Plastic detection', divider='rainbow')
+st.header('RiverPlastix', divider='rainbow')
+st.subheader('An AI app for Plastic Detection on Rivers💦')
 
 uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
 
@@ -220,6 +221,7 @@ if uploaded_file is not None:
         
     st.write("## Detections: ")  
     st.image(np.array(image))
+    st.write(f"count:{count}")
   else:
      st.write("doesn't have exif data")
 
