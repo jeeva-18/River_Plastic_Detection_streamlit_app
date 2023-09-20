@@ -177,8 +177,8 @@ if uploaded_file is not None:
 	    coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
 	    # st.write(coords)
 	    df = pd.DataFrame(
-	        {"lat":coords[0],
-	        'lon':coords[1]},
+	        {"lat":[coords[0],coords[0]],,coords[0]],coords[0]]],
+	        'lon':[coords[1],coords[1],coords[1],coords[1],coords[1]]},
 	        index=[0,1])
 	    color = [1.0, 0.5, 0, 0.2]
 	    st.sidebar.header("Geolocation:",divider='rainbow')
