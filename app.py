@@ -171,7 +171,7 @@ if uploaded_file is not None:
     exif_dict = piexif.load(image.info["exif"])
     new = dict(exif_dict['GPS'])
     val = list(new.values())
-    if val[4][0][0] is not None:
+    if val is not None:
 	    lat_ref = str(val[1])
 	    lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
 	    lon_ref = str(val[3])
@@ -182,7 +182,7 @@ if uploaded_file is not None:
 	        {"lat":coords[0],
 	        'lon':coords[1]},
 	        index=[0,1])
-	    color = np.random.randn(1,4).tolist()
+	    color = [1.0, 0.5, 0, 0.2]
 	    st.sidebar.header("Geolocation:",divider='rainbow')
 	    st.sidebar.map(df,color=color)
   else:
