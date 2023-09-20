@@ -171,7 +171,7 @@ if uploaded_file is not None:
     exif_dict = piexif.load(image.info["exif"])
     new = dict(exif_dict['GPS'])
     val = list(new.values())
-    if val is not None:
+    if len(val)>1:
 	    lat_ref = str(val[1])
 	    lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
 	    lon_ref = str(val[3])
