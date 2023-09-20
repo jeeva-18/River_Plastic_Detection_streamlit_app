@@ -171,60 +171,61 @@ if uploaded_file is not None:
     exif_dict = piexif.load(image.info["exif"])
     new = dict(exif_dict['GPS'])
     val = list(new.values())
-    lat_ref = str(val[1])
-    lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
-    lon_ref = str(val[3])
-    lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
-    coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
-    # st.write(coords)
-    df = pd.DataFrame(
-        {"lat":coords[0],
-        'lon':coords[1]},
-        index=[0,1])
-    color = np.random.rand(1, 4).tolist()[0]
-    st.sidebar.write("## Geolocation:")
-    st.sidebar.map(df,color=color)
-    images = split_images(np.array(image),4,4)
-    model = YOLO("./weights/best.pt")
-    result_boxes = []
-    result_scores = []
-    result_classes = []
-    for i in images:
-      result  = model.predict(i)
-      result_boxes.append(result[0].boxes.xyxy.cpu().numpy())
-      result_scores.append(result[0].boxes.conf.cpu().numpy())
-      result_classes.append(result[0].boxes.cls.cpu().numpy())
-	    
-    all_boxes = []
-    for index,i in enumerate(result_boxes):
-      if index%4==0:
-        b = 2992-(748*(4-count%4))
-        count+=1
-      for j in i:
-        x1,y1,x2,y2 = tuple(j)
-        a = 3992-(998*(4-index%4))
-        shpe = [int(x1+a),int(y1+b),int(x2+a),int(y2+b)]
-        all_boxes.append(shpe)
-    NMS_boxes = non_max_suppression_fast(np.array(all_boxes),nms_threshold)
-    for img in NMS_boxes:
-      xmin,ymin,xmax,ymax = tuple(img)
-      if abs(xmin-xmax)*abs(ymin-ymax) > 600:
-        draw_bounding_box_on_image(image,
-                                    ymin,
-                                    xmin,
-                                    ymax,
-                                    xmax,
-                                    color='blue',
-                                    font=font,
-                                    thickness=4,
-                                    display_str_list=('PLASTIC',"",""))
-        
-    st.subheader(f"Plastic Count \: :red[{len(NMS_boxes)}]")
-    st.write("## Detections: ")  
-    st.image(np.array(image))
-    
+    if val[4][0][0] is not None:
+	    lat_ref = str(val[1])
+	    lat = (val[2][0][0],(val[2][1][0])/10000,val[2][2][0])
+	    lon_ref = str(val[3])
+	    lon = (val[4][0][0],(val[4][1][0])/10000,val[4][2][0])
+	    coords = (decimal_coords(lat,lat_ref),decimal_coords(lon,lon_ref))
+	    # st.write(coords)
+	    df = pd.DataFrame(
+	        {"lat":coords[0],
+	        'lon':coords[1]},
+	        index=[0,1])
+	    color = "red"
+	    st.sidebar.header("Geolocation:",divider='rainbow')
+	    st.sidebar.map(df,color=color)
   else:
      st.write("doesn't have exif data")
+if upload_file is not None:
+	images = split_images(np.array(image),4,4)
+	model = YOLO("./weights/best.pt")
+	result_boxes = []
+	result_scores = []
+	result_classes = []
+	for i in images:
+	result  = model.predict(i)
+	result_boxes.append(result[0].boxes.xyxy.cpu().numpy())
+	result_scores.append(result[0].boxes.conf.cpu().numpy())
+	result_classes.append(result[0].boxes.cls.cpu().numpy())
+	    
+	all_boxes = []
+	for index,i in enumerate(result_boxes):
+	if index%4==0:
+	b = 2992-(748*(4-count%4))
+	count+=1
+	for j in i:
+	x1,y1,x2,y2 = tuple(j)
+	a = 3992-(998*(4-index%4))
+	shpe = [int(x1+a),int(y1+b),int(x2+a),int(y2+b)]
+	all_boxes.append(shpe)
+	NMS_boxes = non_max_suppression_fast(np.array(all_boxes),nms_threshold)
+	for img in NMS_boxes:
+	xmin,ymin,xmax,ymax = tuple(img)
+	if abs(xmin-xmax)*abs(ymin-ymax) > 600:
+	draw_bounding_box_on_image(image,
+				    ymin,
+				    xmin,
+				    ymax,
+				    xmax,
+				    color='blue',
+				    font=font,
+				    thickness=4,
+				    display_str_list=('PLASTIC',"",""))
+	
+	st.subheader(f"Plastic Count \: :red[{len(NMS_boxes)}]")
+	st.write("## Detections: ")  
+	st.image(np.array(image))
 
 
 
