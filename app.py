@@ -158,9 +158,6 @@ uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
 
 font = ImageFont.truetype("Gidole-Regular.ttf",size=50)
 
-nms_threshold = st.slider("NMS_THRESHOLD", min_value=0.0, max_value=1.0, value=0.1)
-
-
 if uploaded_file is not None:
   image = mpimg.imread(uploaded_file)
   st.write(" ## Original Image: ")
@@ -209,7 +206,7 @@ if uploaded_file is not None:
 			a = 3992-(998*(4-index%4))
 			shpe = [int(x1+a),int(y1+b),int(x2+a),int(y2+b)]
 			all_boxes.append(shpe)
-	NMS_boxes = non_max_suppression_fast(np.array(all_boxes),nms_threshold)
+	NMS_boxes = non_max_suppression_fast(np.array(all_boxes),0.1)
 	for img in NMS_boxes:
 		xmin,ymin,xmax,ymax = tuple(img)
 		# if abs(xmin-xmax)*abs(ymin-ymax) > 200:
