@@ -157,7 +157,7 @@ uploaded_file = st.file_uploader("", type=['jpg','png','jpeg'])
 
 font = ImageFont.truetype("Gidole-Regular.ttf",size=50)
 
-nms_threshold = st.slider("NMS_THRESHOLD", min_value=0, max_value=1, value=0.1)
+nms_threshold = st.slider("NMS_THRESHOLD", min_value=0.0, max_value=1.0, value=0.1)
 
 
 if uploaded_file is not None:
