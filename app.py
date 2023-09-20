@@ -219,9 +219,10 @@ if uploaded_file is not None:
                                     thickness=4,
                                     display_str_list=('PLASTIC',"",""))
         
+    st.write(len(NMS_boxes))
     st.write("## Detections: ")  
     st.image(np.array(image))
-    st.write(f"count:{count}")
+    
   else:
      st.write("doesn't have exif data")
 
