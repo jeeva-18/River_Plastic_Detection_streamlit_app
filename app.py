@@ -20,7 +20,6 @@ from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import piexif
-import pydeck as pdk
 from ultralytics import YOLO
 
 count=0
